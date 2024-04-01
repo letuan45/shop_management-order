@@ -27,7 +27,7 @@ model ReceiptOrder {
   employeeId         Int                  @unique
   supplier           Supplier             @relation(fields: [supplierId], references: [id])
   supplierId         Int
-  status             Int
+  status             Int                  @default(0)
   createAt           DateTime             @default(now())
   updateAt           DateTime             @updatedAt
   ReceiptOrderDetail ReceiptOrderDetail[]
