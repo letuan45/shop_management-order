@@ -24,7 +24,7 @@ model Supplier {
 
 model ReceiptOrder {
   id                 Int                  @id @default(autoincrement())
-  employeeId         Int                  @unique
+  employeeId         Int
   supplier           Supplier             @relation(fields: [supplierId], references: [id])
   supplierId         Int
   status             Int                  @default(0)
@@ -35,7 +35,7 @@ model ReceiptOrder {
 
 model ReceiptOrderDetail {
   id             Int          @id @default(autoincrement())
-  productId      Int          @unique
+  productId      Int
   receiptOrder   ReceiptOrder @relation(fields: [receiptOrderId], references: [id])
   receiptOrderId Int
   quantity       Int

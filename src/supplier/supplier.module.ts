@@ -7,5 +7,6 @@ import { SupplierRepository } from './supplier.repository';
 @Module({
   controllers: [SupplierController],
   providers: [SupplierService, PrismaService, SupplierRepository],
+  exports: [SupplierService, SupplierRepository],
 })
 export class SupplierModule {}
