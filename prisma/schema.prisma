@@ -20,6 +20,7 @@ model Supplier {
   phone        String         @unique
   email        String         @unique
   ReceiptOrder ReceiptOrder[]
+  receiptBills ReceiptBill[]
 }
 
 model ReceiptOrder {
@@ -40,4 +41,24 @@ model ReceiptOrderDetail {
   receiptOrderId Int
   quantity       Int
   price          Int
+}
+
+model ReceiptBill {
+  id                 Int                 @id @default(autoincrement())
+  totalPayment       Int
+  employeeId         Int
+  supplier           Supplier            @relation(fields: [supplierId], references: [id])
+  supplierId         Int
+  createAt           DateTime            @default(now())
+  updateAt           DateTime            @updatedAt
+  receiptBillDetails ReceiptBillDetail[]
+}
+
+model ReceiptBillDetail {
+  id            Int         @id @default(autoincrement())
+  productId     Int
+  receiptBill   ReceiptBill @relation(fields: [receiptBillId], references: [id])
+  receiptBillId Int
+  quantity      Int
+  price         Int
 }

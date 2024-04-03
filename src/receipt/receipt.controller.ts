@@ -7,9 +7,21 @@ import { AddReceiptOrderItemDto } from './dtos/addReceiptOrderItem.dto';
 @Controller('receipt')
 export class ReceiptController {
   constructor(private receiptService: ReceiptService) {}
-  async getOrders() {}
 
-  async getOrderById() {}
+  @MessagePattern({ cmd: 'get_receipt_orders' })
+  async getOrders(params: { page: number; search?: string }) {
+    return this.receiptService.getOrders(params);
+  }
+
+  @MessagePattern({ cmd: 'get_receipt_bills' })
+  async getBills(params: { page: number; search?: string }) {
+    return this.receiptService.getBills(params);
+  }
+
+  @MessagePattern({ cmd: 'get_receipt_order_by_id' })
+  async getOrderById(data: { id: number }) {
+    return await this.receiptService.getOrderById(data.id);
+  }
 
   @MessagePattern({ cmd: 'make_receipt_order' })
   async makeOrder(makeReceipOrderDto: MakeReceiptOrderTransferDto) {
@@ -49,5 +61,15 @@ export class ReceiptController {
   @MessagePattern({ cmd: 'delete_order_detail' })
   async deleteOrderDetail(data: { orderDetailId: number }) {
     return await this.receiptService.deleteOrderDetail(data.orderDetailId);
+  }
+
+  @MessagePattern({ cmd: 'cancel_receipt_order' })
+  async cancelOrder(data: { orderId: number }) {
+    return await this.receiptService.cancelOrder(data.orderId);
+  }
+
+  @MessagePattern({ cmd: 'make_receipt_bill' })
+  async makeBill(data: { userId: number; orderId: number }) {
+    return await this.receiptService.makeBill(data.userId, data.orderId);
   }
 }

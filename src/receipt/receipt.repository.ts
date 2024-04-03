@@ -63,4 +63,39 @@ export class ReceiptRepository {
       },
     });
   }
+
+  async cancelOrder(orderId: number) {
+    return await this.prisma.receiptOrder.update({
+      where: { id: orderId },
+      data: { status: 2 },
+    });
+  }
+
+  async submitOrder(orderId: number) {
+    return await this.prisma.receiptOrder.update({
+      where: { id: orderId },
+      data: { status: 1 },
+    });
+  }
+
+  async getBillById(id: number) {
+    return await this.prisma.receiptBill.findUnique({ where: { id } });
+  }
+
+  async makeBill(employeeId: number, totalPayment: number, supplierId: number) {
+    return await this.prisma.receiptBill.create({
+      data: { totalPayment, employeeId, supplierId },
+    });
+  }
+
+  async createBillDetail(
+    productId: number,
+    receiptBillId: number,
+    quantity: number,
+    price: number,
+  ) {
+    return await this.prisma.receiptBillDetail.create({
+      data: { productId, receiptBillId, quantity, price },
+    });
+  }
 }
