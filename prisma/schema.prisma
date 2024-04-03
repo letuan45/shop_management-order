@@ -62,3 +62,10 @@ model ReceiptBillDetail {
   quantity      Int
   price         Int
 }
+
+model Customer {
+  id    Int    @id @default(autoincrement())
+  name  String
+  phone String @unique
+  score Int    @default(0)
+}
