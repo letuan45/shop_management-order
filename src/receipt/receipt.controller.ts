@@ -23,6 +23,11 @@ export class ReceiptController {
     return await this.receiptService.getOrderById(data.id);
   }
 
+  @MessagePattern({ cmd: 'get_receipt_bill_by_id' })
+  async getBillById(data: { id: number }) {
+    return await this.receiptService.getBillById(data.id);
+  }
+
   @MessagePattern({ cmd: 'make_receipt_order' })
   async makeOrder(makeReceipOrderDto: MakeReceiptOrderTransferDto) {
     return await this.receiptService.makeOrder(makeReceipOrderDto);

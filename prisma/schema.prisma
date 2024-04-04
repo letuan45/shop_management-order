@@ -64,8 +64,29 @@ model ReceiptBillDetail {
 }
 
 model Customer {
-  id    Int    @id @default(autoincrement())
-  name  String
-  phone String @unique
-  score Int    @default(0)
+  id            Int            @id @default(autoincrement())
+  name          String
+  phone         String         @unique
+  score         Int            @default(0)
+  sellingOrders SellingOrder[]
+}
+
+model SellingOrder {
+  id                  Int                  @id @default(autoincrement())
+  employeeId          Int
+  customer            Customer             @relation(fields: [customerId], references: [id])
+  customerId          Int
+  status              Int                  @default(0)
+  createAt            DateTime             @default(now())
+  updateAt            DateTime             @updatedAt
+  sellingOrderDetails SellingOrderDetail[]
+}
+
+model SellingOrderDetail {
+  id             Int          @id @default(autoincrement())
+  productId      Int
+  sellingOrder   SellingOrder @relation(fields: [sellingOrderId], references: [id])
+  sellingOrderId Int
+  quantity       Int
+  price          Int
 }

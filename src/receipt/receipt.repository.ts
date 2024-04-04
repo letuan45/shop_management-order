@@ -79,7 +79,10 @@ export class ReceiptRepository {
   }
 
   async getBillById(id: number) {
-    return await this.prisma.receiptBill.findUnique({ where: { id } });
+    return await this.prisma.receiptBill.findUnique({
+      where: { id },
+      include: { receiptBillDetails: true },
+    });
   }
 
   async makeBill(employeeId: number, totalPayment: number, supplierId: number) {

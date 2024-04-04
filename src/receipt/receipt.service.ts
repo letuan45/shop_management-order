@@ -74,6 +74,16 @@ export class ReceiptService {
     return order;
   }
 
+  async getBillById(id: number) {
+    const bill = await this.receiptRepository.getBillById(id);
+    if (!bill) {
+      throw new RpcException(
+        new NotFoundException('Không tìm thấy hóa đơn nhập!'),
+      );
+    }
+    return bill;
+  }
+
   async makeOrder(makeReceipOrderDto: MakeReceiptOrderTransferDto) {
     const supplier = await this.supplierService.getById(
       makeReceipOrderDto.supplierId,
@@ -196,6 +206,11 @@ export class ReceiptService {
 
   async cancelOrder(orderId: number) {
     const order = await this.getOrderById(orderId);
+    if (order.status === 2 || order.status === 1) {
+      throw new RpcException(
+        new ConflictException('Không thể hủy đơn nhập này!'),
+      );
+    }
     return await this.receiptRepository.cancelOrder(order.id);
   }
 
@@ -236,7 +251,7 @@ export class ReceiptService {
       }
 
       await this.receiptRepository.submitOrder(order.id);
-      return await this.receiptRepository.getBillById(receiptBill.id);
+      return await this.getBillById(receiptBill.id);
     } catch (error) {
       throw new RpcException(new Error(error.message));
     }
