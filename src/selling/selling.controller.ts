@@ -23,6 +23,14 @@ export class SellingController {
     return await this.sellingService.makeOrder(makeOrderDto);
   }
 
+  @MessagePattern({ cmd: 'change_selling_order_customer' })
+  async changeCustomer(data: { customerId: number; orderId: number }) {
+    return await this.sellingService.changeOrderCustomer(
+      +data.orderId,
+      +data.customerId,
+    );
+  }
+
   @MessagePattern({ cmd: 'add_selling_order_item' })
   async addOrderDetail(addOrderDetailDto: AddOrderDetailDto) {
     return await this.sellingService.addOrderDetail(addOrderDetailDto);
@@ -57,5 +65,18 @@ export class SellingController {
   @MessagePattern({ cmd: 'cancel_selling_order' })
   async cancelOrder(data: { orderId: number }) {
     return await this.sellingService.cancelOrder(data.orderId);
+  }
+
+  @MessagePattern({ cmd: 'make_selling_bill' })
+  async makeSellingBill(data: {
+    employeeId: number;
+    orderId: number;
+    customerPayment: number;
+  }) {
+    return await this.sellingService.makeBill(
+      data.employeeId,
+      data.orderId,
+      data.customerPayment,
+    );
   }
 }

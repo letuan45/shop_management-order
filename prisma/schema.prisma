@@ -69,13 +69,14 @@ model Customer {
   phone         String         @unique
   score         Int            @default(0)
   sellingOrders SellingOrder[]
+  sellingBills  SellingBill[]
 }
 
 model SellingOrder {
   id                  Int                  @id @default(autoincrement())
   employeeId          Int
-  customer            Customer             @relation(fields: [customerId], references: [id])
-  customerId          Int
+  customer            Customer?            @relation(fields: [customerId], references: [id])
+  customerId          Int?
   status              Int                  @default(0)
   createAt            DateTime             @default(now())
   updateAt            DateTime             @updatedAt
@@ -89,4 +90,26 @@ model SellingOrderDetail {
   sellingOrderId Int
   quantity       Int
   price          Int
+}
+
+model SellingBill {
+  id                 Int                 @id @default(autoincrement())
+  totalPayment       Int
+  employeeId         Int
+  customer           Customer?           @relation(fields: [customerId], references: [id])
+  customerId         Int?
+  customerPayment    Int
+  discount           Int
+  sellingBillDetails SellingBillDetail[]
+  createAt           DateTime            @default(now())
+  updateAt           DateTime            @updatedAt
+}
+
+model SellingBillDetail {
+  id            Int         @id @default(autoincrement())
+  productId     Int
+  sellingBill   SellingBill @relation(fields: [sellingBillId], references: [id])
+  sellingBillId Int
+  quantity      Int
+  price         Int
 }

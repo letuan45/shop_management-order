@@ -74,4 +74,21 @@ export class CustomerService {
 
     return await this.customerRepository.update(id, name, phone);
   }
+
+  async gainScore(id: number, score: number) {
+    const customer = await this.customerRepository.getById(id);
+    if (!customer) {
+      throw new RpcException(
+        new NotFoundException('Không tìm thấy khách hàng!'),
+      );
+    }
+
+    if (customer.score < 2000) {
+      return await this.customerRepository.updateScore(
+        customer.id,
+        customer.score + score,
+      );
+    }
+    return customer;
+  }
 }

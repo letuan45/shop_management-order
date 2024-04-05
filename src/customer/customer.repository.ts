@@ -23,4 +23,11 @@ export class CustomerRepository {
       data: { name, phone },
     });
   }
+
+  async updateScore(id: number, score: number) {
+    return await this.prisma.customer.update({
+      where: { id },
+      data: { score },
+    });
+  }
 }

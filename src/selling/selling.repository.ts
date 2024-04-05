@@ -8,7 +8,7 @@ export class SellingRepository {
   async getOrder(id: number) {
     return await this.prisma.sellingOrder.findUnique({
       where: { id },
-      include: { sellingOrderDetails: true },
+      include: { sellingOrderDetails: true, customer: true },
     });
   }
 
@@ -32,6 +32,19 @@ export class SellingRepository {
   async createOrder(employeeId: number, customerId: number) {
     return await this.prisma.sellingOrder.create({
       data: { employeeId, customerId },
+    });
+  }
+
+  async createOrderWithNoCustomer(employeeId: number) {
+    return await this.prisma.sellingOrder.create({
+      data: { employeeId },
+    });
+  }
+
+  async changeOrderCustomer(id: number, customerId: number | null) {
+    return await this.prisma.sellingOrder.update({
+      where: { id },
+      data: { customerId },
     });
   }
 
@@ -61,6 +74,43 @@ export class SellingRepository {
     return await this.prisma.sellingOrder.update({
       where: { id },
       data: { status: 2 },
+    });
+  }
+
+  async makeBill(
+    totalPayment: number,
+    employeeId: number,
+    customerId: number,
+    customerPayment: number,
+    discount: number,
+  ) {
+    return await this.prisma.sellingBill.create({
+      data: { totalPayment, employeeId, customerId, customerPayment, discount },
+    });
+  }
+
+  async createBillDetail(
+    productId: number,
+    sellingBillId: number,
+    quantity: number,
+    price: number,
+  ) {
+    return await this.prisma.sellingBillDetail.create({
+      data: { productId, sellingBillId, quantity, price },
+    });
+  }
+
+  async getBill(id: number) {
+    return await this.prisma.sellingBill.findUnique({
+      where: { id },
+      include: { sellingBillDetails: true, customer: true },
+    });
+  }
+
+  async confirmOrder(id: number) {
+    return await this.prisma.sellingOrder.update({
+      where: { id },
+      data: { status: 1 },
     });
   }
 }
