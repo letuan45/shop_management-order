@@ -32,6 +32,7 @@ export class SellingService {
       take: this.pageLimit,
       skip: skip,
       where: where,
+      include: { customer: true },
       orderBy: { id: 'desc' },
     });
 
@@ -43,27 +44,28 @@ export class SellingService {
     };
   }
 
-  //   async getBills(params: { page: number; search?: string }) {
-  //     const skip = this.pageLimit * (params.page - 1);
-  //     let where = {};
-  //     if (params.search && typeof +params.search === 'number') {
-  //       where = { id: +params.search };
-  //     }
+  async getBills(params: { page: number; search?: string }) {
+    const skip = this.pageLimit * (params.page - 1);
+    let where = {};
+    if (params.search && typeof +params.search === 'number') {
+      where = { id: +params.search };
+    }
 
-  //     const data = await this.prisma.receiptBill.findMany({
-  //       take: this.pageLimit,
-  //       skip: skip,
-  //       where: where,
-  //       orderBy: { id: 'desc' },
-  //     });
+    const data = await this.prisma.sellingBill.findMany({
+      take: this.pageLimit,
+      skip: skip,
+      where: where,
+      include: { customer: true },
+      orderBy: { id: 'desc' },
+    });
 
-  //     const count = await this.prisma.receiptBill.count({ where: where });
+    const count = await this.prisma.sellingBill.count({ where: where });
 
-  //     return {
-  //       data,
-  //       total: count,
-  //     };
-  //   }
+    return {
+      data,
+      total: count,
+    };
+  }
 
   async getOrder(orderId: number) {
     const order = await this.sellingRepository.getOrder(orderId);

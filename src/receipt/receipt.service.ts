@@ -32,6 +32,7 @@ export class ReceiptService {
       take: this.pageLimit,
       skip: skip,
       where: where,
+      include: { supplier: true },
       orderBy: { id: 'desc' },
     });
 
@@ -54,6 +55,7 @@ export class ReceiptService {
       take: this.pageLimit,
       skip: skip,
       where: where,
+      include: { supplier: true },
       orderBy: { id: 'desc' },
     });
 

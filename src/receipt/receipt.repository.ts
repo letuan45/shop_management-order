@@ -81,7 +81,7 @@ export class ReceiptRepository {
   async getBillById(id: number) {
     return await this.prisma.receiptBill.findUnique({
       where: { id },
-      include: { receiptBillDetails: true },
+      include: { receiptBillDetails: true, supplier: true },
     });
   }
 

@@ -13,9 +13,19 @@ export class SellingController {
     return this.sellingService.getOrders(params);
   }
 
+  @MessagePattern({ cmd: 'get_selling_bills' })
+  async getBills(params: { page: number; search?: string }) {
+    return this.sellingService.getBills(params);
+  }
+
   @MessagePattern({ cmd: 'get_selling_order' })
   async getOrder(data: { orderId: number }) {
     return this.sellingService.getOrder(data.orderId);
+  }
+
+  @MessagePattern({ cmd: 'get_selling_bill' })
+  async getBill(data: { billId: number }) {
+    return this.sellingService.getBill(data.billId);
   }
 
   @MessagePattern({ cmd: 'make_selling_order' })
