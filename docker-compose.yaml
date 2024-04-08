@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: shop_management_order_api
+    environment:
+      - DATABASE_URL=postgresql://postgres:123456@database:5432/shop_management_order?schema=public
+      - AMQP_ORDER_URL=amqps://mlkmitde:gFMA_PMu_GnbzCGxrlmr2nGleqMzMSTm@octopus.rmq3.cloudamqp.com/mlkmitde
+    depends_on:
+      - database
+
+  database:
+    image: postgres
+    container_name: shop_management_order
+    ports:
+      - '5433:5433'
+    volumes:
+      - './postgres-data:/var/lib/postgresql/data'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=shop_management_order
