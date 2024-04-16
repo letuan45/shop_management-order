@@ -19,13 +19,83 @@ export class SellingService {
     private customerService: CustomerService,
   ) {}
 
-  private pageLimit = 10;
+  private pageLimit = 5;
 
-  async getOrders(params: { page: number; search?: string }) {
+  async getOrders(params: {
+    page: number;
+    fromDate?: string;
+    toDate?: string;
+    employeeId?: number;
+  }) {
     const skip = this.pageLimit * (params.page - 1);
     let where = {};
-    if (params.search && typeof +params.search === 'number') {
-      where = { id: +params.search };
+
+    if (params.fromDate && !params.toDate) {
+      where = {
+        createAt: {
+          gte: new Date(params.fromDate),
+        },
+      };
+      if (params.employeeId) {
+        where = {
+          employeeId: params.employeeId,
+          createAt: {
+            gte: new Date(params.fromDate),
+          },
+        };
+      }
+    } else if (!params.fromDate && params.toDate) {
+      const nextDay = new Date(params.toDate);
+      nextDay.setDate(nextDay.getDate() + 1);
+      where = {
+        createAt: {
+          lte: nextDay,
+        },
+      };
+      if (params.employeeId) {
+        where = {
+          employeeId: params.employeeId,
+          createAt: {
+            lte: nextDay,
+          },
+        };
+      }
+    } else if (params.fromDate && params.toDate) {
+      const nextDay = new Date(params.toDate);
+      nextDay.setDate(nextDay.getDate() + 1);
+      where = {
+        AND: [
+          {
+            createAt: {
+              gte: new Date(params.fromDate),
+            },
+          },
+          {
+            createAt: {
+              lte: nextDay,
+            },
+          },
+        ],
+      };
+      if (params.employeeId) {
+        where = {
+          employeeId: params.employeeId,
+          AND: [
+            {
+              createAt: {
+                gte: new Date(params.fromDate),
+              },
+            },
+            {
+              createAt: {
+                lte: nextDay,
+              },
+            },
+          ],
+        };
+      }
+    } else if (params.employeeId) {
+      where = { employeeId: params.employeeId };
     }
 
     const data = await this.prisma.sellingOrder.findMany({
@@ -44,11 +114,81 @@ export class SellingService {
     };
   }
 
-  async getBills(params: { page: number; search?: string }) {
+  async getBills(params: {
+    page: number;
+    fromDate?: string;
+    toDate?: string;
+    employeeId?: number;
+  }) {
     const skip = this.pageLimit * (params.page - 1);
     let where = {};
-    if (params.search && typeof +params.search === 'number') {
-      where = { id: +params.search };
+
+    if (params.fromDate && !params.toDate) {
+      where = {
+        createAt: {
+          gte: new Date(params.fromDate),
+        },
+      };
+      if (params.employeeId) {
+        where = {
+          employeeId: params.employeeId,
+          createAt: {
+            gte: new Date(params.fromDate),
+          },
+        };
+      }
+    } else if (!params.fromDate && params.toDate) {
+      const nextDay = new Date(params.toDate);
+      nextDay.setDate(nextDay.getDate() + 1);
+      where = {
+        createAt: {
+          lte: nextDay,
+        },
+      };
+      if (params.employeeId) {
+        where = {
+          employeeId: params.employeeId,
+          createAt: {
+            lte: nextDay,
+          },
+        };
+      }
+    } else if (params.fromDate && params.toDate) {
+      const nextDay = new Date(params.toDate);
+      nextDay.setDate(nextDay.getDate() + 1);
+      where = {
+        AND: [
+          {
+            createAt: {
+              gte: new Date(params.fromDate),
+            },
+          },
+          {
+            createAt: {
+              lte: nextDay,
+            },
+          },
+        ],
+      };
+      if (params.employeeId) {
+        where = {
+          employeeId: params.employeeId,
+          AND: [
+            {
+              createAt: {
+                gte: new Date(params.fromDate),
+              },
+            },
+            {
+              createAt: {
+                lte: nextDay,
+              },
+            },
+          ],
+        };
+      }
+    } else if (params.employeeId) {
+      where = { employeeId: params.employeeId };
     }
 
     const data = await this.prisma.sellingBill.findMany({

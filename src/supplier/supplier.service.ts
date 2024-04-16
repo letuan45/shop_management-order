@@ -16,7 +16,7 @@ export class SupplierService {
     private prisma: PrismaService,
   ) {}
 
-  pageLimit = 10;
+  pageLimit = 5;
 
   async get(page: number, search?: string) {
     const skip = this.pageLimit * (page - 1);

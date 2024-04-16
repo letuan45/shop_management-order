@@ -9,12 +9,22 @@ export class SellingController {
   constructor(private sellingService: SellingService) {}
 
   @MessagePattern({ cmd: 'get_selling_orders' })
-  async getOrders(params: { page: number; search?: string }) {
+  async getOrders(params: {
+    page: number;
+    fromDate?: string;
+    toDate?: string;
+    employeeId?: number;
+  }) {
     return this.sellingService.getOrders(params);
   }
 
   @MessagePattern({ cmd: 'get_selling_bills' })
-  async getBills(params: { page: number; search?: string }) {
+  async getBills(params: {
+    page: number;
+    fromDate?: string;
+    toDate?: string;
+    employeeId?: number;
+  }) {
     return this.sellingService.getBills(params);
   }
 

@@ -9,12 +9,16 @@ export class ReceiptController {
   constructor(private receiptService: ReceiptService) {}
 
   @MessagePattern({ cmd: 'get_receipt_orders' })
-  async getOrders(params: { page: number; search?: string }) {
+  async getOrders(params: {
+    page: number;
+    fromDate?: string;
+    toDate?: string;
+  }) {
     return this.receiptService.getOrders(params);
   }
 
   @MessagePattern({ cmd: 'get_receipt_bills' })
-  async getBills(params: { page: number; search?: string }) {
+  async getBills(params: { page: number; fromDate?: string; toDate?: string }) {
     return this.receiptService.getBills(params);
   }
 
