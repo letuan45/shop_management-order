@@ -8,7 +8,7 @@ export class ReceiptRepository {
   async getOrderById(id: number) {
     return await this.prisma.receiptOrder.findUnique({
       where: { id },
-      include: { ReceiptOrderDetail: true },
+      include: { ReceiptOrderDetail: true, supplier: true },
     });
   }
 

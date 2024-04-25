@@ -18,6 +18,10 @@ export class SupplierService {
 
   pageLimit = 5;
 
+  async getAll() {
+    return this.prisma.supplier.findMany();
+  }
+
   async get(page: number, search?: string) {
     const skip = this.pageLimit * (page - 1);
     let where = {};

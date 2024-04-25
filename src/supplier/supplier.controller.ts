@@ -8,6 +8,11 @@ import { UpdateSupplierDto } from './dtos/updateSupplier.dto';
 export class SupplierController {
   constructor(private supplierService: SupplierService) {}
 
+  @MessagePattern({ cmd: 'get_all_supplier' })
+  async getAll() {
+    return await this.supplierService.getAll();
+  }
+
   @MessagePattern({ cmd: 'get_supplier' })
   async get(data: { page: number; search?: string }) {
     return await this.supplierService.get(data.page, data.search);
