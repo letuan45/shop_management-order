@@ -2,6 +2,7 @@ import {
   ConflictException,
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { SellingRepository } from './selling.repository';
@@ -209,13 +210,36 @@ export class SellingService {
 
   async getOrder(orderId: number) {
     const order = await this.sellingRepository.getOrder(orderId);
+
+    const totalPayment = order.sellingOrderDetails.reduce(
+      (acc, orderDetail) => {
+        return acc + orderDetail.price * orderDetail.quantity;
+      },
+      0,
+    );
+
+    //Calculate discount
+    let discountPercent = 0;
+    if (order.customer) {
+      if (order.customer.score > 500) {
+        discountPercent = 0.01;
+      }
+      if (order.customer.score > 1000) {
+        discountPercent = 0.06;
+      }
+      if (order.customer.score >= 2000) {
+        discountPercent = 0.1;
+      }
+    }
+    const discount = totalPayment * discountPercent;
+
     if (!order) {
       throw new RpcException(
         new NotFoundException('Không tìm thấy đơn mua hàng'),
       );
     }
 
-    return order;
+    return { ...order, discount };
   }
 
   async getBill(billId: number) {
@@ -402,9 +426,9 @@ export class SellingService {
       0,
     );
 
-    //Calculate discount
-    let discountPercent = 0;
+    let bill = undefined;
     if (order.customer) {
+      let discountPercent = 0;
       if (order.customer.score > 500) {
         discountPercent = 0.01;
       }
@@ -414,27 +438,43 @@ export class SellingService {
       if (order.customer.score >= 2000) {
         discountPercent = 0.1;
       }
-    }
-    const actualPayment = totalPayment - totalPayment * discountPercent;
-    if (customerPayment < actualPayment) {
-      throw new RpcException(
-        new ConflictException('Số tiền thanh toán không đủ'),
+
+      const actualPayment = totalPayment - totalPayment * discountPercent;
+      if (customerPayment < actualPayment) {
+        throw new RpcException(
+          new ConflictException('Số tiền thanh toán không đủ'),
+        );
+      }
+
+      // Gain score
+      const customer = await this.customerService.gainScore(
+        order.customerId,
+        order.sellingOrderDetails.length * 10,
+      );
+
+      bill = await this.sellingRepository.makeBill(
+        actualPayment,
+        employeeId,
+        customer.id,
+        customerPayment,
+        discountPercent,
+      );
+    } else {
+      const actualPayment = totalPayment;
+      bill = await this.sellingRepository.makeBill(
+        actualPayment,
+        employeeId,
+        null,
+        customerPayment,
+        0,
       );
     }
 
-    // Gain score
-    const customer = await this.customerService.gainScore(
-      order.customerId,
-      order.sellingOrderDetails.length * 10,
-    );
-
-    const bill = await this.sellingRepository.makeBill(
-      actualPayment,
-      employeeId,
-      customer.id,
-      customerPayment,
-      discountPercent,
-    );
+    if (!bill) {
+      throw new RpcException(
+        new InternalServerErrorException('Error when creating bill'),
+      );
+    }
 
     // create bill details
     await Promise.all(

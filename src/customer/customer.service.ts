@@ -17,6 +17,10 @@ export class CustomerService {
 
   pageLimit = 5;
 
+  async getAll() {
+    return await this.prisma.customer.findMany();
+  }
+
   async get(page: number, search?: string) {
     const skip = this.pageLimit * (page - 1);
     let where = {};

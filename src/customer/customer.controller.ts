@@ -7,6 +7,11 @@ import { CreateCustomerDto } from './dtos/createCustomer.dto';
 export class CustomerController {
   constructor(private customerService: CustomerService) {}
 
+  @MessagePattern({ cmd: 'get_all_customer' })
+  async getAll() {
+    return await this.customerService.getAll();
+  }
+
   @MessagePattern({ cmd: 'get_customers' })
   async get(data: { page: number; search?: string }) {
     return await this.customerService.get(data.page, data.search);
